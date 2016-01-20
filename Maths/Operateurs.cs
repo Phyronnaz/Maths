@@ -9,11 +9,15 @@ namespace Maths
 		public Element() {}
 
 		public virtual Element Operateur (Operateurs operateur, Element droite) {
-			return (Element)System.Activator.CreateInstance (Type.GetType (operateur.ToString ()), this, droite);
+			return (Element)System.Activator.CreateInstance (Type.GetType ("Maths." + operateur.ToString ()), this, droite);
 		}
 
 		public virtual Element Neutre (Operateurs operateur) {
 			return new Element ();
+		}
+
+		public virtual Element Copy () {
+			return this;
 		}
 	}
 
@@ -59,8 +63,10 @@ namespace Maths
 					return base.Operateur (operateur, droite);
 				}
 			}
-				
-				
+		}
+
+		public static implicit operator Inconnue (string s) {
+			return new Inconnue (s);
 		}
 	}
 
@@ -111,6 +117,43 @@ namespace Maths
 		}
 		#endregion
 
+		public List<Element> GetGaucheAndDroite () {
+			var l = new List<Element> ();
+
+			if (Gauche.GetType ().IsSubclassOf (typeof(Relation)))
+				l.AddRange (((Relation)Gauche).GetGaucheAndDroite ());
+			else
+				l.Add (Gauche);
+		
+			if (Droite.GetType ().IsSubclassOf (typeof(Relation)))
+				l.AddRange (((Relation)Droite).GetGaucheAndDroite ());
+			else
+				l.Add (Droite);
+
+			return l;
+		}
+
+		public List<Relation> GetChildsRelations () {
+			var l = new List<Relation> ();
+
+			l.Add (this);
+
+			if (Gauche.GetType ().IsSubclassOf (typeof(Relation))) {
+				l.AddRange (((Relation)Gauche).GetChildsRelations ());
+				l.Add ((Relation)Gauche);
+			}
+
+			if (Droite.GetType ().IsSubclassOf (typeof(Relation))) {
+				l.AddRange (((Relation)Droite).GetChildsRelations ());
+				l.Add ((Relation)Droite);
+			}
+
+			return l;
+		}
+
+		public override Element Copy () {
+			return (Relation)System.Activator.CreateInstance (this.GetType (), Gauche.Copy (), Droite.Copy ());
+		}
 
 		#region Simplification
 		public Element GetSimple () {

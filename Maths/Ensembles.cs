@@ -126,6 +126,14 @@ namespace Maths
 			}
 		}
 
+		public override Element Copy ()
+		{
+			if (this.isFraction)
+				return new R (a, b);
+			else
+				return new R (r);
+		}
+
 		public override string ToString ()
 		{
 			if (isFraction) {
@@ -287,6 +295,8 @@ namespace Maths
 		{
 			if (b == 0)
 				return a.ToString ();
+			else if (a == 0)
+				return b.ToString()+"i";
 			else
 				return a.ToString ()+"+"+b.ToString()+"i";
 		}
@@ -362,6 +372,11 @@ namespace Maths
 				}
 			}
 		}
+
+		public override Element Copy ()
+		{
+			return new C ((R)a.Copy (), (R)b.Copy ());
+		}
 		#endregion
 
 
@@ -406,6 +421,16 @@ namespace Maths
 
 		public static implicit operator C(int i) {
 			return new C ((R)i, 0);
+		}
+
+		public static implicit operator C(string s) {
+			C c;
+			if (C.TryParse (s, out c)) {
+				return c;
+			} else {
+				Console.WriteLine("Cast error to C from "+s);
+				return new C (0);
+			}
 		}
 		#endregion
 	}
