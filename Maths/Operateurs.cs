@@ -21,55 +21,6 @@ namespace Maths
 		}
 	}
 
-	public class Inconnue : Element {
-		public string name;
-
-		public Inconnue (string s) {
-			name = s;
-		}
-
-		public override string ToString ()
-		{
-			return name;
-		}
-
-		public override Element Neutre (Operateurs operateur)
-		{
-			return new Inconnue("0");
-		}
-
-		public override Element Operateur (Operateurs operateur, Element droite)
-		{
-			if (droite.GetType () != this.GetType ()) {
-				return base.Operateur (operateur, droite);
-			} else if (this.name != ((Inconnue)droite).name) {
-				if (((Inconnue)droite).name == "0") {
-					switch (operateur) {
-					case Operateurs.Addition:
-						return this;
-					case Operateurs.Multiplication:
-						return droite;
-					default:
-						return base.Operateur (operateur, droite);
-					}
-				} else {
-					return base.Operateur (operateur, droite);
-				}
-			} else {
-				switch (operateur) {
-				case Operateurs.Addition:
-					return new Multiplication ((R)2, this);
-				default:
-					return base.Operateur (operateur, droite);
-				}
-			}
-		}
-
-		public static implicit operator Inconnue (string s) {
-			return new Inconnue (s);
-		}
-	}
-
 
 	public abstract class Relation : Element {
 		
@@ -117,6 +68,7 @@ namespace Maths
 		}
 		#endregion
 
+		#region Get and Copy
 		public List<Element> GetGaucheAndDroite () {
 			var l = new List<Element> ();
 
@@ -154,6 +106,7 @@ namespace Maths
 		public override Element Copy () {
 			return (Relation)System.Activator.CreateInstance (this.GetType (), Gauche.Copy (), Droite.Copy ());
 		}
+		#endregion
 
 		#region Simplification
 		public Element GetSimple () {
@@ -277,7 +230,7 @@ namespace Maths
 		#endregion
 
 
-		#region Operator && generic functions
+		#region Operators && generic functions
 		public static bool operator ==(Relation g, Relation d) {
 			return (g.Gauche == d.Gauche) && (g.Droite == d.Droite) && (g.GetType() == d.GetType());
 		}
@@ -300,40 +253,5 @@ namespace Maths
 			return Gauche.GetHashCode () + Droite.GetHashCode ();
 		}
 		#endregion
-	}
-		
-
-	public class Addition : Relation {
-		public override int Priority { get { return 0; } }
-		public override bool IsAssociative { get { return true; } }
-		public override bool IsCommutative { get { return true; } }
-
-
-		public Addition (Element gauche, Element droite) {
-			Gauche = gauche;
-			Droite = droite;
-		}
-
-		public override string ToString ()
-		{
-			return "(" + Gauche.ToString () + "+" + Droite.ToString () + ")";
-		}
-	}
-
-	public class Multiplication : Relation {
-		public override int Priority { get { return 1; } }
-		public override bool IsAssociative { get { return true; } }
-		public override bool IsCommutative { get { return true; } }
-		protected override List<Operateurs> distributiveSur { get { return new List<Operateurs> { Operateurs.Addition }; } }
-
-		public Multiplication (Element gauche, Element droite) {
-			Gauche = gauche;
-			Droite = droite;
-		}
-
-		public override string ToString ()
-		{
-			return "(" + Gauche.ToString () + "*" + Droite.ToString () + ")";
-		}
 	}
 }
