@@ -7,17 +7,19 @@ namespace Maths
 	{
 		public static void Main (string[] args)
 		{
-			Application.Init ();
+			Gtk.Application.Init ();
 			MainWindow win = new MainWindow ();
 			win.Show ();
 
-			Fonction f = new Fonction (new Addition ((Inconnue)"x", new Multiplication(new Multiplication((Inconnue)"x",(Inconnue)"x"),(R)3)), (Inconnue)"x");
-			Console.WriteLine (((Relation)f.Expression).GetSimple ());
-			Console.WriteLine (f.GetValue ((R)3));
-			Console.WriteLine (f.GetValue (new Multiplication ((R)4, (R)3)));
-			Console.WriteLine (f.Expression);
-			
-			Application.Run ();
+//			Fonction f = new Fonction (new Addition ((Inconnue)"x", new Multiplication(new Multiplication((Inconnue)"x",(Inconnue)"x"),(R)3)), (Inconnue)"x");
+//			Console.WriteLine (f.GetSimple ());
+//			Console.WriteLine (f.GetValue (new R(3,4)));
+//			Console.WriteLine (f.Expression);
+//			Console.WriteLine (f.Derivee((Inconnue)"x"));
+
+			Console.WriteLine((R)"4");
+
+			Gtk.Application.Run ();
 		}
 	}
 }

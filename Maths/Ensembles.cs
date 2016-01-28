@@ -2,10 +2,58 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Maths
-{
-	public class R : Element
+namespace Ensembles {
+	public abstract class Ensemble {
+		public abstract bool Contains (Object o);
+	}
+
+	public class EnsembleDescriptionExplicite : Ensemble {
+		public List<Object> ensemble = new List<object>();
+
+		public override bool Contains (object o)
+		{
+			return ensemble.Contains (o);
+		}
+	}
+
+	public class EnsembleDescriptionImplicite : Ensemble {
+		public override bool Contains (object o)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+
+	public class EnsembleDescriptionParametrique : Ensemble {
+		public override bool Contains (object o)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+}
+
+namespace Maths {
+	public class Valeur {
+		public virtual bool IsPartof(Ensemble ensemble) {
+			return false;
+		}
+	}
+
+	public class R: Valeur
 	{
+		#region Inherited
+		public override bool IsPartof (Ensemble ensemble)
+		{
+			switch(ensemble) {
+			case Ensemble.C:
+				return true;
+			case Ensemble.R:
+				return true;
+			default:
+				return false;
+			}
+		}
+		#endregion
+
 		#region Variables
 		private Int64 a_value;
 		private Int64 b_value;
@@ -74,6 +122,10 @@ namespace Maths
 
 		#region Functions
 		private void Reduct () {
+			if(b < 0) {
+				b = -b;
+				a = -a;
+			}
 			if (a == 0 || b == 0)
 				return;
 
@@ -94,44 +146,6 @@ namespace Maths
 
 			a_value /= a1;
 			b_value /= a1;
-		}
-
-		public override Element Operateur (Operateurs operateur, Element droite) {
-			if (droite.GetType () != this.GetType ()) {
-				return null;
-			} else {
-				switch (operateur) {
-				case Operateurs.Addition:
-					return this + (R) droite;
-
-				case Operateurs.Multiplication:
-					return this * (R) droite;
-
-				default:
-					Console.WriteLine ("Operator not handled");
-					return null;
-				}
-			}
-		}
-
-		public override Element Neutre (Operateurs operateur)
-		{
-			switch (operateur) {
-			case Operateurs.Addition:
-				return (R)0;
-			case Operateurs.Multiplication:
-				return (R)1;
-			default:
-				return (R)0;
-			}
-		}
-
-		public override Element Copy ()
-		{
-			if (this.isFraction)
-				return new R (a, b);
-			else
-				return new R (r);
 		}
 
 		public override string ToString ()
@@ -262,11 +276,38 @@ namespace Maths
 		public static implicit operator R(double d) {
 			return new R (d);
 		}
+
+		public static implicit operator R(string s) {
+			R r;
+			if (R.TryParse (s, out r)) {
+				return r;
+			} else {
+				Console.WriteLine("Cast error to R from "+s);
+				return new R (0);
+			}
+		}
 		#endregion
 	}
 
-	public class C : Element
+	public class C: Valeur
 	{
+		#region Inherited
+		public override bool IsPartof (Ensemble ensemble)
+		{
+			switch(ensemble) {
+			case Ensemble.C:
+				return true;
+			case Ensemble.R:
+				if (Im == 0)
+					return true;
+				else
+					return false;
+			default:
+				return false;
+			}
+		}
+		#endregion
+
 		#region Variables
 		private R a;
 		private R b;
@@ -324,6 +365,11 @@ namespace Maths
 			s = s.Replace (" ", "");
 			if(s.Contains("+")) {
 				var split = s.Split ("+".ToCharArray ());
+				if(split[0].Contains("i")) {
+					var tmp = split [0];
+					split [0] = split [1];
+					split [1] = tmp;
+				}
 				R a, b;
 				if(R.TryParse(split[0], out a) && R.TryParse(split[1].Replace("i", ""), out b)) {
 					c = new C (a, b);
@@ -353,29 +399,6 @@ namespace Maths
 					}
 				}
 			}
-		}
-
-		public override Element Operateur (Operateurs operateur, Element droite) {
-			if (droite.GetType () != this.GetType ()) {
-				return null;
-			} else {
-				switch (operateur) {
-				case Operateurs.Addition:
-					return this + (C) droite;
-
-				case Operateurs.Multiplication:
-					return this * (C) droite;
-
-				default:
-					Console.WriteLine ("Operator not handled");
-					return null;
-				}
-			}
-		}
-
-		public override Element Copy ()
-		{
-			return new C ((R)a.Copy (), (R)b.Copy ());
 		}
 		#endregion
 

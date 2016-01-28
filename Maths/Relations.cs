@@ -1,40 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Maths
 {
-	public class Addition : Relation {
-		public override int Priority { get { return 0; } }
-		public override bool IsAssociative { get { return true; } }
-		public override bool IsCommutative { get { return true; } }
-
-
-		public Addition (Element gauche, Element droite) {
-			Gauche = gauche;
-			Droite = droite;
-		}
-
-		public override string ToString ()
-		{
-			return "(" + Gauche.ToString () + "+" + Droite.ToString () + ")";
-		}
+	public class Relation
+	{
+		
 	}
 
-	public class Multiplication : Relation {
-		public override int Priority { get { return 1; } }
-		public override bool IsAssociative { get { return true; } }
-		public override bool IsCommutative { get { return true; } }
-		protected override List<Operateurs> distributiveSur { get { return new List<Operateurs> { Operateurs.Addition }; } }
+	public class RelationBinaire : Relation {
+		
+	}
 
-		public Multiplication (Element gauche, Element droite) {
-			Gauche = gauche;
-			Droite = droite;
-		}
+	public abstract class Application : RelationBinaire {
+		public abstract Ensemble[] départ { get;}
+		public abstract Ensemble[] arrivée { get;}
+	}
 
-		public override string ToString ()
-		{
-			return "(" + Gauche.ToString () + "*" + Droite.ToString () + ")";
-		}
+	public abstract class LoiDeComposition : Application {
+		public bool estLoiDeCompositionInterne { get { return (départ == arrivée); } }
+	}
+
+	public class Addition : LoiDeComposition {
+		public override Ensemble[] départ { get { return new Ensemble[]{Ensemble.C}; } }
+		public override Ensemble[] arrivée { get { return new Ensemble[]{Ensemble.C}; } }
+
+
 	}
 }
 

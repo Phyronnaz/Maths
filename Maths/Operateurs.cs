@@ -21,8 +21,7 @@ namespace Maths
 		}
 	}
 
-
-	public abstract class Relation : Element {
+	public abstract class Operation : Element {
 		
 		#region Variables
 		public abstract int Priority { get; }
@@ -72,39 +71,39 @@ namespace Maths
 		public List<Element> GetGaucheAndDroite () {
 			var l = new List<Element> ();
 
-			if (Gauche.GetType ().IsSubclassOf (typeof(Relation)))
-				l.AddRange (((Relation)Gauche).GetGaucheAndDroite ());
+			if (Gauche.GetType ().IsSubclassOf (typeof(Operation)))
+				l.AddRange (((Operation)Gauche).GetGaucheAndDroite ());
 			else
 				l.Add (Gauche);
 		
-			if (Droite.GetType ().IsSubclassOf (typeof(Relation)))
-				l.AddRange (((Relation)Droite).GetGaucheAndDroite ());
+			if (Droite.GetType ().IsSubclassOf (typeof(Operation)))
+				l.AddRange (((Operation)Droite).GetGaucheAndDroite ());
 			else
 				l.Add (Droite);
 
 			return l;
 		}
 
-		public List<Relation> GetChildsRelations () {
-			var l = new List<Relation> ();
+		public List<Operation> GetChildsOperations () {
+			var l = new List<Operation> ();
 
 			l.Add (this);
 
-			if (Gauche.GetType ().IsSubclassOf (typeof(Relation))) {
-				l.AddRange (((Relation)Gauche).GetChildsRelations ());
-				l.Add ((Relation)Gauche);
+			if (Gauche.GetType ().IsSubclassOf (typeof(Operation))) {
+				l.AddRange (((Operation)Gauche).GetChildsOperations ());
+				l.Add ((Operation)Gauche);
 			}
 
-			if (Droite.GetType ().IsSubclassOf (typeof(Relation))) {
-				l.AddRange (((Relation)Droite).GetChildsRelations ());
-				l.Add ((Relation)Droite);
+			if (Droite.GetType ().IsSubclassOf (typeof(Operation))) {
+				l.AddRange (((Operation)Droite).GetChildsOperations ());
+				l.Add ((Operation)Droite);
 			}
 
 			return l;
 		}
 
 		public override Element Copy () {
-			return (Relation)System.Activator.CreateInstance (this.GetType (), Gauche.Copy (), Droite.Copy ());
+			return (Operation)System.Activator.CreateInstance (this.GetType (), Gauche.Copy (), Droite.Copy ());
 		}
 		#endregion
 
@@ -118,31 +117,31 @@ namespace Maths
 
 			//Si un neutre
 			if (Gauche == Gauche.Neutre (Name)) {
-				if (Droite.GetType ().IsSubclassOf (typeof(Relation)))
-					return ((Relation)Droite).GetSimple ();
+				if (Droite.GetType ().IsSubclassOf (typeof(Operation)))
+					return ((Operation)Droite).GetSimple ();
 				else
 					return Droite;
 			} else if (Droite == Droite.Neutre (Name)) {
-				if (Gauche.GetType ().IsSubclassOf (typeof(Relation)))
-					return ((Relation)Gauche).GetSimple ();
+				if (Gauche.GetType ().IsSubclassOf (typeof(Operation)))
+					return ((Operation)Gauche).GetSimple ();
 				else
 					return Gauche;
 			}
 
 			//Développement: on développe d'abord à gauche puis à droite si on ne peut pas
-			if (Droite.GetType ().IsSubclassOf (typeof(Relation))) {
-				if (this.IsDistributiveOn (((Relation)Droite).Name)) {
-					return ((Relation)System.Activator.CreateInstance (Droite.GetType (),
-						(Relation)System.Activator.CreateInstance (this.GetType (), Gauche, ((Relation)Droite).Gauche),
-						(Relation)System.Activator.CreateInstance (this.GetType (), Gauche, ((Relation)Droite).Droite))).GetSimple ();
+			if (Droite.GetType ().IsSubclassOf (typeof(Operation))) {
+				if (this.IsDistributiveOn (((Operation)Droite).Name)) {
+					return ((Operation)System.Activator.CreateInstance (Droite.GetType (),
+						(Operation)System.Activator.CreateInstance (this.GetType (), Gauche, ((Operation)Droite).Gauche),
+						(Operation)System.Activator.CreateInstance (this.GetType (), Gauche, ((Operation)Droite).Droite))).GetSimple ();
 				}
 			}
 			if (Droite != Droite.Neutre (this.Name)) {
-				if (Gauche.GetType ().IsSubclassOf (typeof(Relation))) {
-					if (this.IsDistributiveOn (((Relation)Gauche).Name)) {
-						return ((Relation)System.Activator.CreateInstance (Gauche.GetType (),
-							(Relation)System.Activator.CreateInstance (this.GetType (), ((Relation)Gauche).Gauche, Droite),
-							(Relation)System.Activator.CreateInstance (this.GetType (), ((Relation)Gauche).Droite, Droite))).GetSimple ();
+				if (Gauche.GetType ().IsSubclassOf (typeof(Operation))) {
+					if (this.IsDistributiveOn (((Operation)Gauche).Name)) {
+						return ((Operation)System.Activator.CreateInstance (Gauche.GetType (),
+							(Operation)System.Activator.CreateInstance (this.GetType (), ((Operation)Gauche).Gauche, Droite),
+							(Operation)System.Activator.CreateInstance (this.GetType (), ((Operation)Gauche).Droite, Droite))).GetSimple ();
 					}
 				}
 			}
@@ -151,15 +150,15 @@ namespace Maths
 			var continuer = true;
 			while (continuer) {
 				continuer = false;
-				if (Gauche.GetType ().IsSubclassOf (typeof(Relation))) {
+				if (Gauche.GetType ().IsSubclassOf (typeof(Operation))) {
 					bool b;
-					Gauche = ((Relation)Gauche).GetSimple (out b);
+					Gauche = ((Operation)Gauche).GetSimple (out b);
 					continuer = continuer || b;
 					hasChanged = hasChanged || b;
 				}
-				if (Droite.GetType ().IsSubclassOf (typeof(Relation))) {
+				if (Droite.GetType ().IsSubclassOf (typeof(Operation))) {
 					bool b;
-					Droite = ((Relation)Droite).GetSimple (out b);
+					Droite = ((Operation)Droite).GetSimple (out b);
 					continuer = continuer || b;
 					hasChanged = hasChanged || b;
 				}
@@ -169,14 +168,14 @@ namespace Maths
 			if (IsAssociative) {
 				List<Element> liste = new List<Element> ();
 				if (Gauche.GetType () == this.GetType ()) {
-					liste.Add (((Relation)Gauche).Gauche);
-					liste.Add (((Relation)Gauche).Droite);
+					liste.Add (((Operation)Gauche).Gauche);
+					liste.Add (((Operation)Gauche).Droite);
 				} else {
 					liste.Add (Gauche);
 				}
 				if (Droite.GetType () == this.GetType ()) {
-					liste.Add (((Relation)Droite).Gauche);
-					liste.Add (((Relation)Droite).Droite);
+					liste.Add (((Operation)Droite).Gauche);
+					liste.Add (((Operation)Droite).Droite);
 				} else {
 					liste.Add (Droite);
 				}
@@ -207,12 +206,12 @@ namespace Maths
 					Droite = liste [1];
 					break;
 				case 3:
-					Gauche = (Relation)System.Activator.CreateInstance (this.GetType (), liste [0], liste [1]);
-					Gauche = (Relation)System.Activator.CreateInstance (this.GetType (), liste [2], liste [2].Neutre (Name));
+					Gauche = (Operation)System.Activator.CreateInstance (this.GetType (), liste [0], liste [1]);
+					Gauche = (Operation)System.Activator.CreateInstance (this.GetType (), liste [2], liste [2].Neutre (Name));
 					break;
 				case 4:
-					Gauche = (Relation)System.Activator.CreateInstance (this.GetType (), liste [0], liste [1]);
-					Gauche = (Relation)System.Activator.CreateInstance (this.GetType (), liste [2], liste [3]);
+					Gauche = (Operation)System.Activator.CreateInstance (this.GetType (), liste [0], liste [1]);
+					Gauche = (Operation)System.Activator.CreateInstance (this.GetType (), liste [2], liste [3]);
 					break;
 				}
 			}
@@ -229,13 +228,12 @@ namespace Maths
 		}
 		#endregion
 
-
 		#region Operators && generic functions
-		public static bool operator ==(Relation g, Relation d) {
+		public static bool operator ==(Operation g, Operation d) {
 			return (g.Gauche == d.Gauche) && (g.Droite == d.Droite) && (g.GetType() == d.GetType());
 		}
 
-		public static bool operator !=(Relation g, Relation d) {
+		public static bool operator !=(Operation g, Operation d) {
 			return (g.Gauche != d.Gauche) || (g.Droite != d.Droite) || (g.GetType() != d.GetType());
 		}
 
@@ -243,7 +241,7 @@ namespace Maths
 		public override bool Equals (object obj)
 		{
 			if (obj.GetType () == this.GetType ())
-				return (Relation)obj == this;
+				return (Operation)obj == this;
 			else
 				return false;
 		}
