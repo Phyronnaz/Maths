@@ -66,7 +66,6 @@
     <Compile Include="Polynomes.cs" />
     <Compile Include="Operateurs.cs" />
     <Compile Include="Fonctions.cs" />
-    <Compile Include="Operations.cs" />
     <Compile Include="Relations.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

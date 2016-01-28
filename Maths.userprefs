@@ -1,15 +1,11 @@
 ﻿<Properties StartupItem="Maths/Maths.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Maths/Ensembles.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Maths/Fonctions.cs">
     <Files>
       <File FileName="Maths/Program.cs" Line="1" Column="1" />
-      <File FileName="Maths/Ensembles.cs" Line="34" Column="18" />
-      <File FileName="Maths/Fonctions.cs" Line="1" Column="1" />
-      <File FileName="Maths/MainWindow.cs" Line="1" Column="1" />
       <File FileName="Maths/Operateurs.cs" Line="1" Column="1" />
-      <File FileName="Maths/Operations.cs" Line="12" Column="41" />
-      <File FileName="Maths/Polynomes.cs" Line="1" Column="1" />
-      <File FileName="Maths/Relations.cs" Line="23" Column="44" />
+      <File FileName="Maths/Ensembles.cs" Line="1" Column="1" />
+      <File FileName="Maths/Fonctions.cs" Line="7" Column="20" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
